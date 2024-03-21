@@ -33,27 +33,32 @@ public class GamePanel extends JPanel implements Runnable
     public void run()
     {
         double drawInterval  = 1000000000 /fps;
-        double nextDrawTime = System.nanoTime() + drawInterval;
-
+        double delta = 0;
+        long lastTime = System.nanoTime();
+        long currentTime;
+        int timer = 0;
+        int drawCount = 0;
 
         while (gameThread != null)
         {
-            update();
-            repaint();
-            try
+            currentTime = System.nanoTime();
+
+            delta += (currentTime - lastTime) / drawInterval;
+            timer += (currentTime - lastTime);
+            lastTime = currentTime;
+
+            if (delta >= 1)
             {
-                double remainingTime = nextDrawTime - System.nanoTime();
-                remainingTime = remainingTime / 1000000;
-                if (remainingTime < 0)
-                {
-                    remainingTime = 0;
-                }
-                Thread.sleep((long)(remainingTime));
-                nextDrawTime += drawInterval;
+                update();
+                repaint();
+                delta--;
+                drawCount++;
             }
-            catch (InterruptedException e)
+            if (timer >= 1000000000)
             {
-                e.printStackTrace();
+                System.out.println("FPS: " + drawCount);
+                drawCount = 0;
+                timer = 0;
             }
         }
     }
