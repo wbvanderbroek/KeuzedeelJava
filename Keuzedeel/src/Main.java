@@ -14,7 +14,7 @@ public class Main {
 
         window.setLocationRelativeTo(null);
         window.setVisible(true);
-        System.out.println("Hello world!");
+        System.out.println("Game started");
         gamePanel.StartGameThread();
     }
 }

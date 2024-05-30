@@ -87,10 +87,20 @@ public class GamePanel extends JPanel implements Runnable
     {
         super.paintComponent(graphics);
 
-        Graphics2D graphics2D  = (Graphics2D)graphics;
+        Graphics2D player  = (Graphics2D)graphics;
 
-        graphics2D.setColor(Color.white);
-        graphics2D.fillRect(playerX,playerY,tileSize,tileSize);
-        graphics2D.dispose();
+        player.setColor(Color.white);
+        player.fillRect(playerX,playerY,tileSize,tileSize);
+        //player.dispose();
+
+        CreateObstacle(graphics, 100, 200, tileSize, tileSize);
+        CreateObstacle(graphics, 200, 200, tileSize, tileSize);
+        CreateObstacle(graphics, 300, 200, tileSize, tileSize);
+    }
+    private void CreateObstacle(Graphics graphics, int posX, int posY, int sizeX, int sizeY)
+    {
+        Graphics2D obstacle  = (Graphics2D)graphics;
+        obstacle.setColor(Color.red);
+        obstacle.fillRect(posX,posY,sizeX,sizeY);
     }
 }
