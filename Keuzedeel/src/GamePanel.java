@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable
 {
@@ -16,6 +17,7 @@ public class GamePanel extends JPanel implements Runnable
     int playerX = 100;
     int playerY = 100;
     int playerSpeed = 5;
+    ArrayList<Rectangle> obstacles;
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -23,6 +25,11 @@ public class GamePanel extends JPanel implements Runnable
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+
+        obstacles = new ArrayList<>();
+        obstacles.add(new Rectangle(100, 200, tileSize, tileSize));
+        obstacles.add(new Rectangle(200, 200, tileSize, tileSize));
+        obstacles.add(new Rectangle(300, 200, tileSize, tileSize));
     }
     public void StartGameThread()
     {
@@ -64,22 +71,40 @@ public class GamePanel extends JPanel implements Runnable
     }
     public void update()
     {
-        if (keyHandler.upPressed == true)
-        {
-            playerY -= playerSpeed;
-        }
-        if (keyHandler.downPressed == true)
-        {
-            playerY += playerSpeed;
+        int nextPlayerX = playerX;
+        int nextPlayerY = playerY;
 
-        }
-        if (keyHandler.leftPressed == true)
+        if (keyHandler.upPressed)
         {
-            playerX -= playerSpeed;
+            nextPlayerY -= playerSpeed;
         }
-        if (keyHandler.rightPressed == true)
+        if (keyHandler.downPressed)
         {
-            playerX += playerSpeed;
+            nextPlayerY += playerSpeed;
+        }
+        if (keyHandler.leftPressed)
+        {
+            nextPlayerX -= playerSpeed;
+        }
+        if (keyHandler.rightPressed)
+        {
+            nextPlayerX += playerSpeed;
+        }
+
+        Rectangle nextPlayerRect = new Rectangle(nextPlayerX, nextPlayerY, tileSize, tileSize);
+        boolean collision = false;
+        for (Rectangle obstacle : obstacles)
+        {
+            if (nextPlayerRect.intersects(obstacle))
+            {
+                collision = true;
+                break;
+            }
+        }
+
+        if (!collision) {
+            playerX = nextPlayerX;
+            playerY = nextPlayerY;
         }
 
     }
@@ -87,15 +112,17 @@ public class GamePanel extends JPanel implements Runnable
     {
         super.paintComponent(graphics);
 
+        //Display player
         Graphics2D player  = (Graphics2D)graphics;
-
         player.setColor(Color.white);
         player.fillRect(playerX,playerY,tileSize,tileSize);
         //player.dispose();
 
-        CreateObstacle(graphics, 100, 200, tileSize, tileSize);
-        CreateObstacle(graphics, 200, 200, tileSize, tileSize);
-        CreateObstacle(graphics, 300, 200, tileSize, tileSize);
+        //Display all the obstacles
+        for (Rectangle obstacle : obstacles)
+        {
+            CreateObstacle(graphics, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        }
     }
     private void CreateObstacle(Graphics graphics, int posX, int posY, int sizeX, int sizeY)
     {
