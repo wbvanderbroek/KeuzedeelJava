@@ -116,7 +116,6 @@ public class GamePanel extends JPanel implements Runnable
             playerX = nextPlayerX;
         }
 
-
         Rectangle nextPlayerRectY = new Rectangle(playerX, nextPlayerY, tileSize, tileSize);
         boolean collisionY = false;
         for (Rectangle obstacle : obstacles)
@@ -131,7 +130,10 @@ public class GamePanel extends JPanel implements Runnable
         {
             playerY = nextPlayerY;
         }
-
+        if (playerX != nextPlayerX || playerY != nextPlayerY)
+        {
+            System.out.println(playerX +" "+ playerY +"    " + nextPlayerX +" "+ nextPlayerY);
+        }
     }
     public void paintComponent(Graphics graphics)
     {
