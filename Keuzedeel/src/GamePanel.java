@@ -91,19 +91,33 @@ public class GamePanel extends JPanel implements Runnable
             nextPlayerX += playerSpeed;
         }
 
-        Rectangle nextPlayerRect = new Rectangle(nextPlayerX, nextPlayerY, tileSize, tileSize);
-        boolean collision = false;
+        Rectangle nextPlayerRectX = new Rectangle(nextPlayerX, playerY, tileSize, tileSize);
+        boolean collisionX = false;
         for (Rectangle obstacle : obstacles)
         {
-            if (nextPlayerRect.intersects(obstacle))
+            if (nextPlayerRectX.intersects(obstacle))
             {
-                collision = true;
+                collisionX = true;
                 break;
             }
         }
-
-        if (!collision) {
+        if (!collisionX)
+        {
             playerX = nextPlayerX;
+        }
+
+        Rectangle nextPlayerRectY = new Rectangle(playerX, nextPlayerY, tileSize, tileSize);
+        boolean collisionY = false;
+        for (Rectangle obstacle : obstacles)
+        {
+            if (nextPlayerRectY.intersects(obstacle))
+            {
+                collisionY = true;
+                break;
+            }
+        }
+        if (!collisionY)
+        {
             playerY = nextPlayerY;
         }
 
