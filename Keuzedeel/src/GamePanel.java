@@ -101,38 +101,57 @@ public class GamePanel extends JPanel implements Runnable
             nextPlayerX += playerSpeed;
         }
 
-        Rectangle nextPlayerRectX = new Rectangle(nextPlayerX, playerY, tileSize, tileSize);
+
         boolean collisionX = false;
-        for (Rectangle obstacle : obstacles)
+        if (playerX != nextPlayerX)
         {
-            if (nextPlayerRectX.intersects(obstacle))
+            for (int i = 1; i <= playerSpeed; i++)
             {
-                collisionX = true;
-                break;
+                Rectangle nextPlayerRectX = new Rectangle(playerX + (nextPlayerX - playerX > 0 ? i : -i), playerY, tileSize, tileSize);
+                collisionX = false;
+                for (Rectangle obstacle : obstacles)
+                {
+                    if (nextPlayerRectX.intersects(obstacle))
+                    {
+                        collisionX = true;
+                        break;
+                    }
+                }
+                if (!collisionX)
+                {
+                    playerX = playerX + (nextPlayerX - playerX > 0 ? 1 : -1);
+                }
+                else
+                {
+                    break;
+                }
             }
-        }
-        if (!collisionX)
-        {
-            playerX = nextPlayerX;
         }
 
-        Rectangle nextPlayerRectY = new Rectangle(playerX, nextPlayerY, tileSize, tileSize);
         boolean collisionY = false;
-        for (Rectangle obstacle : obstacles)
+        if (playerY != nextPlayerY)
         {
-            if (nextPlayerRectY.intersects(obstacle))
+            for (int i = 1; i <= playerSpeed; i++)
             {
-                collisionY = true;
-                break;
+                Rectangle nextPlayerRectX = new Rectangle(playerX, playerY + (nextPlayerY - playerY > 0 ? i : -i), tileSize, tileSize);
+                collisionY = false;
+                for (Rectangle obstacle : obstacles)
+                {
+                    if (nextPlayerRectX.intersects(obstacle))
+                    {
+                        collisionY = true;
+                        break;
+                    }
+                }
+                if (!collisionY)
+                {
+                    playerY = playerY + (nextPlayerY - playerY > 0 ? 1 : -1);
+                }
+                else
+                {
+                    break;
+                }
             }
-        }
-        if (!collisionY)
-        {
-            playerY = nextPlayerY;
-        }
-        if (playerX != nextPlayerX || playerY != nextPlayerY)
-        {
-            System.out.println(playerX +" "+ playerY +"    " + nextPlayerX +" "+ nextPlayerY);
         }
     }
     public void paintComponent(Graphics graphics)
