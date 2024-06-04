@@ -14,8 +14,8 @@ public class GamePanel extends JPanel implements Runnable
     int fps = 60;
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
-    int playerX = 100;
-    int playerY = 100;
+    int playerX = tileSize;
+    int playerY = tileSize;
     int playerSpeed = 5;
     ArrayList<Rectangle> obstacles;
     public GamePanel()
@@ -27,9 +27,19 @@ public class GamePanel extends JPanel implements Runnable
         this.setFocusable(true);
 
         obstacles = new ArrayList<>();
-        obstacles.add(new Rectangle(100, 200, tileSize, tileSize));
-        obstacles.add(new Rectangle(200, 200, tileSize, tileSize));
-        obstacles.add(new Rectangle(300, 200, tileSize, tileSize));
+        //left and right bar
+        obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
+        obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
+        //top and bottom bar
+        obstacles.add(new Rectangle(0, 0, tileSize * screenWidth, tileSize));
+        obstacles.add(new Rectangle(0, screenHeight - tileSize, tileSize * screenWidth, tileSize));
+
+        //actual obstacles
+        obstacles.add(new Rectangle(tileSize * 3, tileSize, tileSize, tileSize * 8));
+        obstacles.add(new Rectangle(tileSize * 6, tileSize * 3, tileSize, tileSize * 8));
+        obstacles.add(new Rectangle(tileSize * 9, tileSize, tileSize, tileSize * 8));
+        obstacles.add(new Rectangle(tileSize * 12, tileSize * 3, tileSize, tileSize * 8));
+
     }
     public void StartGameThread()
     {
@@ -105,6 +115,7 @@ public class GamePanel extends JPanel implements Runnable
         {
             playerX = nextPlayerX;
         }
+
 
         Rectangle nextPlayerRectY = new Rectangle(playerX, nextPlayerY, tileSize, tileSize);
         boolean collisionY = false;
