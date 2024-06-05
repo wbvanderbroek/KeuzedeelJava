@@ -17,6 +17,7 @@ public class GamePanel extends JPanel implements Runnable
     Thread gameThread;
     ArrayList<Rectangle> obstacles;
     ArrayList<Rectangle> finish;
+    ArrayList<Rectangle> healthPickups;
     boolean gameStarted = false;
     int currentLevel = 1;
     Player player = new Player(tileSize);
@@ -148,6 +149,21 @@ public class GamePanel extends JPanel implements Runnable
                     player.playerFinished = true;
                 }
             }
+            ArrayList<Rectangle> objectsToRemove = new ArrayList<>();
+            for (Rectangle object : healthPickups)
+            {
+                if (playerRect.intersects(object))
+                {
+                    objectsToRemove.add(object);
+                    System.out.println("pickedupHelath");
+                    player.health = player.health + 20;
+                }
+            }
+            for (Rectangle object :objectsToRemove)
+            {
+                healthPickups.remove(object);
+            }
+
         }
 
         if ((collisionX || collisionY) == true)
@@ -184,6 +200,11 @@ public class GamePanel extends JPanel implements Runnable
 
         for (Rectangle object : finish)
         {
+            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.DARK_GRAY);
+        }
+
+        for (Rectangle object : healthPickups)
+        {
             CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.green);
         }
         graphics.setColor(Color.white);
@@ -214,6 +235,11 @@ public class GamePanel extends JPanel implements Runnable
         player.posY = tileSize;
         player.posX = tileSize;
         player.playerFinished = false;
+        obstacles = new ArrayList<>();
+        finish = new ArrayList<>();
+        healthPickups = new ArrayList<>();
+
+
         if (currentLevel == 1)
         {
             if (obstacles != null)
@@ -226,7 +252,6 @@ public class GamePanel extends JPanel implements Runnable
                 finish.clear();
             }
 
-            obstacles = new ArrayList<>();
             //left and right bar
             obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
             obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
@@ -241,8 +266,11 @@ public class GamePanel extends JPanel implements Runnable
             obstacles.add(new Rectangle(tileSize * 12, tileSize * 3, tileSize, tileSize * 8));
 
             //finish
-            finish = new ArrayList<>();
             finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
+
+            //health pickups
+            healthPickups.add(new Rectangle(tileSize, tileSize * 4, tileSize, tileSize));
+
         }
         else if (currentLevel == 2)
         {
@@ -256,7 +284,6 @@ public class GamePanel extends JPanel implements Runnable
                 finish.clear();
             }
 
-            obstacles = new ArrayList<>();
             //left and right bar
             obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
             obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
@@ -267,7 +294,6 @@ public class GamePanel extends JPanel implements Runnable
             //actual obstacles
 
             //finish
-            finish = new ArrayList<>();
             finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
         }
     }
