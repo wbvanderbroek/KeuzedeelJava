@@ -20,6 +20,8 @@ public class GamePanel extends JPanel implements Runnable
     ArrayList<Rectangle> obstacles;
     ArrayList<Rectangle> finish;
     boolean playerFinished = false;
+    boolean gameStarted = false;
+    int currentLevel = 1;
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -27,24 +29,6 @@ public class GamePanel extends JPanel implements Runnable
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
-
-        obstacles = new ArrayList<>();
-        //left and right bar
-        obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
-        obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
-        //top and bottom bar
-        obstacles.add(new Rectangle(0, 0, tileSize * screenWidth, tileSize));
-        obstacles.add(new Rectangle(0, screenHeight - tileSize, tileSize * screenWidth, tileSize));
-
-        //actual obstacles
-        obstacles.add(new Rectangle(tileSize * 3, tileSize, tileSize, tileSize * 8));
-        obstacles.add(new Rectangle(tileSize * 6, tileSize * 3, tileSize, tileSize * 8));
-        obstacles.add(new Rectangle(tileSize * 9, tileSize, tileSize, tileSize * 8));
-        obstacles.add(new Rectangle(tileSize * 12, tileSize * 3, tileSize, tileSize * 8));
-
-        //finish
-        finish = new ArrayList<>();
-        finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
     }
     public void StartGameThread()
     {
@@ -88,22 +72,19 @@ public class GamePanel extends JPanel implements Runnable
     {
         int nextPlayerX = playerX;
         int nextPlayerY = playerY;
-
-        if (keyHandler.upPressed)
-        {
-            nextPlayerY -= playerSpeed;
-        }
-        if (keyHandler.downPressed)
-        {
-            nextPlayerY += playerSpeed;
-        }
-        if (keyHandler.leftPressed)
-        {
-            nextPlayerX -= playerSpeed;
-        }
-        if (keyHandler.rightPressed)
-        {
-            nextPlayerX += playerSpeed;
+        if (!playerFinished) {
+            if (keyHandler.upPressed) {
+                nextPlayerY -= playerSpeed;
+            }
+            if (keyHandler.downPressed) {
+                nextPlayerY += playerSpeed;
+            }
+            if (keyHandler.leftPressed) {
+                nextPlayerX -= playerSpeed;
+            }
+            if (keyHandler.rightPressed) {
+                nextPlayerX += playerSpeed;
+            }
         }
 
         boolean collisionX = false;
@@ -157,18 +138,27 @@ public class GamePanel extends JPanel implements Runnable
                 }
             }
         }
-        Rectangle playerRect = new Rectangle(playerX, playerY, tileSize, tileSize);
-        for (Rectangle object : finish)
+        if (!playerFinished)
         {
-            if (playerRect.intersects(object))
+            Rectangle playerRect = new Rectangle(playerX, playerY, tileSize, tileSize);
+            for (Rectangle object : finish)
             {
-                System.out.println("finished");
-                playerFinished = true;
+                if (playerRect.intersects(object))
+                {
+                    System.out.println("finished");
+                    playerFinished = true;
+                }
             }
         }
+
     }
     public void paintComponent(Graphics _graphics)
     {
+        if (!gameStarted)
+        {
+            LevelLoader();
+            gameStarted = true;
+        }
         super.paintComponent(_graphics);
 
         //Display player
@@ -198,6 +188,67 @@ public class GamePanel extends JPanel implements Runnable
             int x = (screenWidth - textWidth) / 2;
             int y = (screenHeight - textHeight) / 2;
             graphics.drawString(text, x, y);
+            currentLevel++;
+            LevelLoader();
+        }
+    }
+    private void LevelLoader()
+    {
+        if (currentLevel == 1)
+        {
+            if (obstacles != null)
+            {
+                obstacles.clear();
+
+            }
+            if (finish != null)
+            {
+                finish.clear();
+            }
+
+            obstacles = new ArrayList<>();
+            //left and right bar
+            obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
+            obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
+            //top and bottom bar
+            obstacles.add(new Rectangle(0, 0, tileSize * screenWidth, tileSize));
+            obstacles.add(new Rectangle(0, screenHeight - tileSize, tileSize * screenWidth, tileSize));
+
+            //actual obstacles
+            obstacles.add(new Rectangle(tileSize * 3, tileSize, tileSize, tileSize * 8));
+            obstacles.add(new Rectangle(tileSize * 6, tileSize * 3, tileSize, tileSize * 8));
+            obstacles.add(new Rectangle(tileSize * 9, tileSize, tileSize, tileSize * 8));
+            obstacles.add(new Rectangle(tileSize * 12, tileSize * 3, tileSize, tileSize * 8));
+
+            //finish
+            finish = new ArrayList<>();
+            finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
+        }
+        else if (currentLevel == 2)
+        {
+            if (obstacles != null)
+            {
+                obstacles.clear();
+
+            }
+            if (finish != null)
+            {
+                finish.clear();
+            }
+
+            obstacles = new ArrayList<>();
+            //left and right bar
+            obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
+            obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
+            //top and bottom bar
+            obstacles.add(new Rectangle(0, 0, tileSize * screenWidth, tileSize));
+            obstacles.add(new Rectangle(0, screenHeight - tileSize, tileSize * screenWidth, tileSize));
+
+            //actual obstacles
+
+            //finish
+            finish = new ArrayList<>();
+            finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
         }
     }
     private void CreateObstacle(Graphics _graphics, int posX, int posY, int sizeX, int sizeY, Color color)
