@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class GamePanel extends JPanel implements Runnable
 {
@@ -14,14 +15,11 @@ public class GamePanel extends JPanel implements Runnable
     int fps = 60;
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
-    int playerX = tileSize;
-    int playerY = tileSize;
-    int playerSpeed = 5;
     ArrayList<Rectangle> obstacles;
     ArrayList<Rectangle> finish;
-    boolean playerFinished = false;
     boolean gameStarted = false;
     int currentLevel = 1;
+    Player player = new Player(tileSize);
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -70,29 +68,29 @@ public class GamePanel extends JPanel implements Runnable
     }
     public void update()
     {
-        int nextPlayerX = playerX;
-        int nextPlayerY = playerY;
-        if (!playerFinished) {
+        int nextPlayerX = player.posX;
+        int nextPlayerY = player.posY;
+        if (!player.playerFinished) {
             if (keyHandler.upPressed) {
-                nextPlayerY -= playerSpeed;
+                nextPlayerY -= player.playerSpeed;
             }
             if (keyHandler.downPressed) {
-                nextPlayerY += playerSpeed;
+                nextPlayerY += player.playerSpeed;
             }
             if (keyHandler.leftPressed) {
-                nextPlayerX -= playerSpeed;
+                nextPlayerX -= player.playerSpeed;
             }
             if (keyHandler.rightPressed) {
-                nextPlayerX += playerSpeed;
+                nextPlayerX += player.playerSpeed;
             }
         }
 
         boolean collisionX = false;
-        if (playerX != nextPlayerX)
+        if (player.posX != nextPlayerX)
         {
-            for (int i = 1; i <= playerSpeed; i++)
+            for (int i = 1; i <= player.playerSpeed; i++)
             {
-                Rectangle nextPlayerRectX = new Rectangle(playerX + (nextPlayerX - playerX > 0 ? i : -i), playerY, tileSize, tileSize);
+                Rectangle nextPlayerRectX = new Rectangle(player.posX + (nextPlayerX - player.posX > 0 ? i : -i), player.posY, tileSize, tileSize);
                 collisionX = false;
                 for (Rectangle obstacle : obstacles)
                 {
@@ -104,7 +102,7 @@ public class GamePanel extends JPanel implements Runnable
                 }
                 if (!collisionX)
                 {
-                    playerX = playerX + (nextPlayerX - playerX > 0 ? 1 : -1);
+                    player.posX = player.posX + (nextPlayerX - player.posX > 0 ? 1 : -1);
                 }
                 else
                 {
@@ -114,11 +112,11 @@ public class GamePanel extends JPanel implements Runnable
         }
 
         boolean collisionY = false;
-        if (playerY != nextPlayerY)
+        if (player.posY != nextPlayerY)
         {
-            for (int i = 1; i <= playerSpeed; i++)
+            for (int i = 1; i <= player.playerSpeed; i++)
             {
-                Rectangle nextPlayerRectX = new Rectangle(playerX, playerY + (nextPlayerY - playerY > 0 ? i : -i), tileSize, tileSize);
+                Rectangle nextPlayerRectX = new Rectangle(player.posX, player.posY + (nextPlayerY - player.posY > 0 ? i : -i), tileSize, tileSize);
                 collisionY = false;
                 for (Rectangle obstacle : obstacles)
                 {
@@ -130,7 +128,7 @@ public class GamePanel extends JPanel implements Runnable
                 }
                 if (!collisionY)
                 {
-                    playerY = playerY + (nextPlayerY - playerY > 0 ? 1 : -1);
+                    player.posY = player.posY + (nextPlayerY - player.posY > 0 ? 1 : -1);
                 }
                 else
                 {
@@ -138,17 +136,28 @@ public class GamePanel extends JPanel implements Runnable
                 }
             }
         }
-        if (!playerFinished)
+
+        if (!player.playerFinished)
         {
-            Rectangle playerRect = new Rectangle(playerX, playerY, tileSize, tileSize);
+            Rectangle playerRect = new Rectangle(player.posX, player.posY, tileSize, tileSize);
             for (Rectangle object : finish)
             {
                 if (playerRect.intersects(object))
                 {
                     System.out.println("finished");
-                    playerFinished = true;
+                    player.playerFinished = true;
                 }
             }
+        }
+
+        if ((collisionX || collisionY) == true)
+        {
+            player.health--;
+            System.out.println("collided");
+        }
+        if (player.health <= 0)
+        {
+            LevelLoader();
         }
 
     }
@@ -164,7 +173,7 @@ public class GamePanel extends JPanel implements Runnable
         //Display player
         Graphics2D graphics = (Graphics2D)_graphics;
         graphics.setColor(Color.white);
-        graphics.fillRect(playerX,playerY,tileSize,tileSize);
+        graphics.fillRect(player.posX,player.posY,tileSize,tileSize);
         //player.dispose();
 
         //Display all the obstacles
@@ -177,10 +186,10 @@ public class GamePanel extends JPanel implements Runnable
         {
             CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.green);
         }
-        if (playerFinished)
+        graphics.setColor(Color.white);
+        graphics.setFont(new Font("Arial", Font.BOLD, 40));
+        if (player.playerFinished)
         {
-            graphics.setColor(Color.white);
-            graphics.setFont(new Font("Arial", Font.BOLD, 40));
             FontMetrics fm = graphics.getFontMetrics();
             String text = "Finished game";
             int textWidth = fm.stringWidth(text);
@@ -191,9 +200,20 @@ public class GamePanel extends JPanel implements Runnable
             currentLevel++;
             LevelLoader();
         }
+        FontMetrics fm = graphics.getFontMetrics();
+        String text = "Finished game";
+        int textWidth = fm.stringWidth(text);
+        int textHeight = fm.getHeight();
+        int x = (screenWidth - textWidth) / 12;
+        int y = (screenHeight - textHeight) / 12;
+        graphics.drawString(String.valueOf(player.health), x, y);
     }
     private void LevelLoader()
     {
+        player.health = player.maxHealth;
+        player.posY = tileSize;
+        player.posX = tileSize;
+        player.playerFinished = false;
         if (currentLevel == 1)
         {
             if (obstacles != null)
