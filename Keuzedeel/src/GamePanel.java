@@ -18,6 +18,8 @@ public class GamePanel extends JPanel implements Runnable
     int playerY = tileSize;
     int playerSpeed = 5;
     ArrayList<Rectangle> obstacles;
+    ArrayList<Rectangle> finish;
+    boolean playerFinished = false;
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -40,6 +42,9 @@ public class GamePanel extends JPanel implements Runnable
         obstacles.add(new Rectangle(tileSize * 9, tileSize, tileSize, tileSize * 8));
         obstacles.add(new Rectangle(tileSize * 12, tileSize * 3, tileSize, tileSize * 8));
 
+        //finish
+        finish = new ArrayList<>();
+        finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
     }
     public void StartGameThread()
     {
@@ -101,7 +106,6 @@ public class GamePanel extends JPanel implements Runnable
             nextPlayerX += playerSpeed;
         }
 
-
         boolean collisionX = false;
         if (playerX != nextPlayerX)
         {
@@ -153,27 +157,53 @@ public class GamePanel extends JPanel implements Runnable
                 }
             }
         }
+        Rectangle playerRect = new Rectangle(playerX, playerY, tileSize, tileSize);
+        for (Rectangle object : finish)
+        {
+            if (playerRect.intersects(object))
+            {
+                System.out.println("finished");
+                playerFinished = true;
+            }
+        }
     }
-    public void paintComponent(Graphics graphics)
+    public void paintComponent(Graphics _graphics)
     {
-        super.paintComponent(graphics);
+        super.paintComponent(_graphics);
 
         //Display player
-        Graphics2D player  = (Graphics2D)graphics;
-        player.setColor(Color.white);
-        player.fillRect(playerX,playerY,tileSize,tileSize);
+        Graphics2D graphics = (Graphics2D)_graphics;
+        graphics.setColor(Color.white);
+        graphics.fillRect(playerX,playerY,tileSize,tileSize);
         //player.dispose();
 
         //Display all the obstacles
         for (Rectangle obstacle : obstacles)
         {
-            CreateObstacle(graphics, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            CreateObstacle(_graphics, obstacle.x, obstacle.y, obstacle.width, obstacle.height, Color.red);
+        }
+
+        for (Rectangle object : finish)
+        {
+            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.green);
+        }
+        if (playerFinished)
+        {
+            graphics.setColor(Color.white);
+            graphics.setFont(new Font("Arial", Font.BOLD, 40));
+            FontMetrics fm = graphics.getFontMetrics();
+            String text = "Finished game";
+            int textWidth = fm.stringWidth(text);
+            int textHeight = fm.getHeight();
+            int x = (screenWidth - textWidth) / 2;
+            int y = (screenHeight - textHeight) / 2;
+            graphics.drawString(text, x, y);
         }
     }
-    private void CreateObstacle(Graphics graphics, int posX, int posY, int sizeX, int sizeY)
+    private void CreateObstacle(Graphics _graphics, int posX, int posY, int sizeX, int sizeY, Color color)
     {
-        Graphics2D obstacle  = (Graphics2D)graphics;
-        obstacle.setColor(Color.red);
+        Graphics2D obstacle  = (Graphics2D)_graphics;
+        obstacle.setColor(color);
         obstacle.fillRect(posX,posY,sizeX,sizeY);
     }
 }
