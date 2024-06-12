@@ -18,6 +18,7 @@ public class GamePanel extends JPanel implements Runnable
     ArrayList<Rectangle> obstacles;
     ArrayList<Rectangle> finish;
     ArrayList<Rectangle> healthPickups;
+    ArrayList<Rectangle> path;
     boolean gameStarted = false;
     int currentLevel = 1;
     Player player = new Player(tileSize);
@@ -149,13 +150,14 @@ public class GamePanel extends JPanel implements Runnable
                     player.playerFinished = true;
                 }
             }
+
             ArrayList<Rectangle> objectsToRemove = new ArrayList<>();
             for (Rectangle object : healthPickups)
             {
                 if (playerRect.intersects(object))
                 {
                     objectsToRemove.add(object);
-                    System.out.println("pickedupHelath");
+                    System.out.println("pickedUpHealth");
                     player.health = player.health + 20;
                 }
             }
@@ -179,18 +181,15 @@ public class GamePanel extends JPanel implements Runnable
     }
     public void paintComponent(Graphics _graphics)
     {
+
         if (!gameStarted)
         {
             LevelLoader();
             gameStarted = true;
         }
         super.paintComponent(_graphics);
-
-        //Display player
         Graphics2D graphics = (Graphics2D)_graphics;
-        graphics.setColor(Color.white);
-        graphics.fillRect(player.posX,player.posY,tileSize,tileSize);
-        //player.dispose();
+
 
         //Display all the obstacles
         for (Rectangle obstacle : obstacles)
@@ -207,6 +206,11 @@ public class GamePanel extends JPanel implements Runnable
         {
             CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.green);
         }
+        for (Rectangle object : path)
+        {
+            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.white);
+        }
+
         graphics.setColor(Color.white);
         graphics.setFont(new Font("Arial", Font.BOLD, 40));
         if (player.playerFinished)
@@ -228,6 +232,12 @@ public class GamePanel extends JPanel implements Runnable
         int x = (screenWidth - textWidth) / 12;
         int y = (screenHeight - textHeight) / 12;
         graphics.drawString(String.valueOf(player.health), x, y);
+
+        //Display player
+        graphics.setColor(Color.orange);
+        graphics.fillRect(player.posX,player.posY,tileSize,tileSize);
+
+
     }
     private void LevelLoader()
     {
@@ -238,27 +248,30 @@ public class GamePanel extends JPanel implements Runnable
         obstacles = new ArrayList<>();
         finish = new ArrayList<>();
         healthPickups = new ArrayList<>();
+        path = new ArrayList<>();
 
+        if (obstacles != null)
+        {
+            obstacles.clear();
+
+        }
+        if (finish != null)
+        {
+            finish.clear();
+        }
+        if (path != null)
+        {
+            path.clear();
+        }
+        //left and right bar
+        obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
+        obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
+        //top and bottom bar
+        obstacles.add(new Rectangle(0, 0, tileSize * screenWidth, tileSize));
+        obstacles.add(new Rectangle(0, screenHeight - tileSize, tileSize * screenWidth, tileSize));
 
         if (currentLevel == 1)
         {
-            if (obstacles != null)
-            {
-                obstacles.clear();
-
-            }
-            if (finish != null)
-            {
-                finish.clear();
-            }
-
-            //left and right bar
-            obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
-            obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
-            //top and bottom bar
-            obstacles.add(new Rectangle(0, 0, tileSize * screenWidth, tileSize));
-            obstacles.add(new Rectangle(0, screenHeight - tileSize, tileSize * screenWidth, tileSize));
-
             //actual obstacles
             obstacles.add(new Rectangle(tileSize * 3, tileSize, tileSize, tileSize * 8));
             obstacles.add(new Rectangle(tileSize * 6, tileSize * 3, tileSize, tileSize * 8));
@@ -274,28 +287,30 @@ public class GamePanel extends JPanel implements Runnable
         }
         else if (currentLevel == 2)
         {
-            if (obstacles != null)
-            {
-                obstacles.clear();
-
-            }
-            if (finish != null)
-            {
-                finish.clear();
-            }
-
-            //left and right bar
-            obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
-            obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
-            //top and bottom bar
-            obstacles.add(new Rectangle(0, 0, tileSize * screenWidth, tileSize));
-            obstacles.add(new Rectangle(0, screenHeight - tileSize, tileSize * screenWidth, tileSize));
-
-            //actual obstacles
-
             //finish
             finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
         }
+        for (int i = 0; i < maxScreenCol; i++)
+        {
+            for (int j = 0; j < maxScreenRow; j++)
+            {
+                Rectangle tempRect = new Rectangle(tileSize * i, tileSize * j, tileSize, tileSize);
+                boolean intersects = false;
+                for (Rectangle object : obstacles)
+                {
+                    if (tempRect.intersects(object))
+                    {
+                        intersects = true;
+                        break;
+                    }
+                }
+                if (!intersects)
+                {
+                    path.add(tempRect);
+                }
+            }
+        }
+
     }
     private void CreateObstacle(Graphics _graphics, int posX, int posY, int sizeX, int sizeY, Color color)
     {
