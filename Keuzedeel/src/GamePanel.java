@@ -22,6 +22,7 @@ public class GamePanel extends JPanel implements Runnable
     boolean gameStarted = false;
     int currentLevel = 1;
     Player player = new Player(tileSize);
+    Enemy enemy = new Enemy(tileSize);
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -177,8 +178,30 @@ public class GamePanel extends JPanel implements Runnable
         {
             LevelLoader();
         }
-
+        moveEnemy();
     }
+
+    private void moveEnemy()
+    {
+        if (enemy.posX < player.posX)
+        {
+            enemy.posX += enemy.speed;
+        }
+        else if (enemy.posX > player.posX)
+        {
+            enemy.posX -= enemy.speed;
+        }
+
+        if (enemy.posY < player.posY)
+        {
+            enemy.posY += enemy.speed;
+        }
+        else if (enemy.posY > player.posY)
+        {
+            enemy.posY -= enemy.speed;
+        }
+    }
+
     public void paintComponent(Graphics _graphics)
     {
 
@@ -196,21 +219,18 @@ public class GamePanel extends JPanel implements Runnable
         {
             CreateObstacle(_graphics, obstacle.x, obstacle.y, obstacle.width, obstacle.height, Color.red);
         }
-
-        for (Rectangle object : finish)
-        {
-            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.DARK_GRAY);
-        }
-
-        for (Rectangle object : healthPickups)
-        {
-            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.green);
-        }
         for (Rectangle object : path)
         {
             CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.white);
         }
-
+        for (Rectangle object : healthPickups)
+        {
+            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.green);
+        }
+        for (Rectangle object : finish)
+        {
+            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.DARK_GRAY);
+        }
         graphics.setColor(Color.white);
         graphics.setFont(new Font("Arial", Font.BOLD, 40));
         if (player.playerFinished)
@@ -232,8 +252,11 @@ public class GamePanel extends JPanel implements Runnable
         int x = (screenWidth - textWidth) / 12;
         int y = (screenHeight - textHeight) / 12;
         graphics.drawString(String.valueOf(player.health), x, y);
-
-        //Display player
+        //display enemy
+        graphics.setColor(Color.blue);
+        System.out.println(enemy.posY);
+        graphics.fillRect(enemy.posX,enemy.posY,tileSize,tileSize);
+        //Display players
         graphics.setColor(Color.orange);
         graphics.fillRect(player.posX,player.posY,tileSize,tileSize);
 
