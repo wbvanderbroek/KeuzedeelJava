@@ -4,7 +4,7 @@ public class Enemy
     public int maxHealth = 100;
     public int posX;
     public int posY;
-    public int speed = 5;
+    public int speed = 3;
     public Enemy(int tileSize)
     {
         posX = tileSize;

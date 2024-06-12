@@ -12,17 +12,27 @@ public class GamePanel extends JPanel implements Runnable
     final int maxScreenRow = 12;
     final int screenWidth = tileSize * maxScreenCol;
     final int screenHeight = tileSize * maxScreenRow;
+
     int fps = 60;
-    KeyHandler keyHandler = new KeyHandler();
+    KeyHandler keyHandler = new KeyHandler(this);
     Thread gameThread;
+
     ArrayList<Rectangle> obstacles;
     ArrayList<Rectangle> finish;
     ArrayList<Rectangle> healthPickups;
     ArrayList<Rectangle> path;
+
     boolean gameStarted = false;
-    int currentLevel = 1;
+    int currentLevel = 3;
     Player player = new Player(tileSize);
     Enemy enemy = new Enemy(tileSize);
+
+    Node [] [] node = new Node [maxScreenCol] [maxScreenRow];
+    Node startNode, goalNode, currentNode;
+    ArrayList<Node> openList = new ArrayList<>();
+    ArrayList<Node> checkedList = new ArrayList<>();
+    boolean goalReached = false;
+    int step = 0;
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -30,7 +40,183 @@ public class GamePanel extends JPanel implements Runnable
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+
+        StartAStar();
     }
+    private void StartAStar()
+    {
+        int col = 0;
+        int row = 0;
+        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+        this.setBackground(Color.black);
+        this.setLayout(new GridLayout(maxScreenRow, maxScreenCol));
+        while (col < maxScreenCol && row < maxScreenRow)
+        {
+            node [col] [row] = new Node (col, row);
+            this.add(node [col] [row]);
+            col++;
+            if (col == maxScreenCol)
+            {
+                col = 0;
+                row++;
+            }
+        }
+        setStartNode(3,6);
+        setGoalNode(11,3);
+
+        setSolidNode(10, 2);
+        setSolidNode(10, 3);
+        setSolidNode(10, 4);
+        setSolidNode(10, 5);
+        setSolidNode(10, 6);
+        setSolidNode(10, 7);
+        setSolidNode(6, 2);
+        setSolidNode(7, 2);
+        setSolidNode(8, 2);
+        setSolidNode(9, 2);
+        setSolidNode(11, 7);
+        setSolidNode(12, 7);
+
+        setCosts();
+        search();
+    }
+    private void setStartNode(int col, int row)
+    {
+        node [col] [row].setAsStart();
+        startNode = node [col] [row];
+        currentNode = startNode;
+    }
+    private void setGoalNode(int col, int row)
+    {
+        node [col] [row].setAsGoal();
+        goalNode = node [col] [row];
+    }
+    private void setSolidNode(int col, int row)
+    {
+        node [col] [row].setAsSolid();
+    }
+    private void setCosts()
+    {
+        int col = 0;
+        int row = 0;
+
+        while (col < maxScreenCol && row <maxScreenRow)
+        {
+            getCost(node [col] [row]);
+            col++;
+            if (col == maxScreenCol)
+            {
+                col = 0;
+                row++;
+            }
+        }
+    }
+    private void getCost(Node node)
+    {
+        //g cost, distance from start node
+        int xDistance = Math.abs(node.col - startNode.col);
+        int yDistance = Math.abs(node.row - startNode.row);
+        node.gCost = xDistance + yDistance;
+
+        //h cost, distance from goal node
+        xDistance = Math.abs(node.col - goalNode.col);
+        yDistance = Math.abs(node.row - goalNode.row);
+        node.hCost = xDistance + yDistance;
+
+        //f cost, total cost
+        node.fCost = node.gCost + node.hCost;
+
+        //display cost on node
+        if (node != startNode && node != goalNode)
+        {
+            node.setText("<html>F:" +node.fCost + "<br>G:" + node.gCost + "</html>");
+        }
+    }
+    public void search()
+    {
+        step = 0;
+        while (goalReached == false && step < 300)
+        {
+            int col = currentNode.col;
+            int row = currentNode.row;
+            currentNode.setAsChecked();
+            checkedList.add(currentNode);
+            openList.remove(currentNode);
+
+            if (row -1 >= 0)
+            {
+                openNode(node[col][row - 1]);
+            }
+            if (row + 1 < maxScreenRow)
+            {
+                openNode(node[col][row + 1]);
+            }
+            if (col -1 >= 0)
+            {
+                openNode(node[col - 1][row]);
+            }
+            if (col +1 < maxScreenCol)
+            {
+                openNode(node[col + 1][row]);
+            }
+
+            int bestNodeIndex = 0;
+            int bestNodefCost = 999;
+
+            for (int  i = 0; i < openList.size(); i++)
+            {
+                if (openList.get(i).fCost < bestNodefCost)
+                {
+                    bestNodeIndex = i;
+                    bestNodefCost = openList.get(i).fCost;
+                }
+                else if (openList.get(i).fCost == bestNodefCost)
+                {
+                    if (openList.get(i).gCost < openList.get(bestNodeIndex).gCost)
+                    {
+                        bestNodeIndex = i;
+                    }
+                }
+            }
+
+            currentNode = openList.get(bestNodeIndex);
+            if (currentNode == goalNode)
+            {
+                goalReached = true;
+                trackPath();
+            }
+            step++;
+        }
+    }
+    private void openNode(Node node)
+    {
+        if (node.open == false && node.checked == false && node.solid == false)
+        {
+            node.setAsOpen();
+            node.parent = currentNode;
+            openList.add(node);
+        }
+    }
+
+    private void trackPath()
+    {
+        Node current = goalNode;
+
+        while (current != startNode)
+        {
+            current = current.parent;
+
+            if (current != startNode)
+            {
+                current.setAsPath();
+            }
+        }
+    }
+
+
+
+
+
     public void StartGameThread()
     {
         gameThread = new Thread(this);
@@ -254,7 +440,6 @@ public class GamePanel extends JPanel implements Runnable
         graphics.drawString(String.valueOf(player.health), x, y);
         //display enemy
         graphics.setColor(Color.blue);
-        System.out.println(enemy.posY);
         graphics.fillRect(enemy.posX,enemy.posY,tileSize,tileSize);
         //Display players
         graphics.setColor(Color.orange);

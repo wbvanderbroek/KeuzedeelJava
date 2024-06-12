@@ -1,8 +1,15 @@
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.security.Key;
 
 public class KeyHandler implements KeyListener
 {
+    GamePanel gp;
+    public KeyHandler(GamePanel gp)
+    {
+        this.gp = gp;
+    }
+
     public boolean upPressed, downPressed, leftPressed, rightPressed;
     @Override
     public void keyTyped(KeyEvent e)
