@@ -120,7 +120,6 @@ public class Player
         if ((collisionX || collisionY) == true)
         {
             health--;
-            System.out.println("collided");
         }
         if (health <= 0)
         {

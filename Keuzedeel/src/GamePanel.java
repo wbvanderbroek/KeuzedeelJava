@@ -80,6 +80,11 @@ public class GamePanel extends JPanel implements Runnable
     {
         player.update();
         enemy.update();
+        if (player.playerFinished)
+        {
+            levelLoader.currentLevel++;
+            levelLoader.LoadLevel();
+        }
     }
 
     public void paintComponent(Graphics _graphics)
@@ -92,7 +97,7 @@ public class GamePanel extends JPanel implements Runnable
         super.paintComponent(_graphics);
         Graphics2D graphics = (Graphics2D)_graphics;
 
-        //Display all the obstacles
+        //Display all the objects
         for (Rectangle obstacle : obstacles)
         {
             CreateObstacle(_graphics, obstacle.x, obstacle.y, obstacle.width, obstacle.height, Color.red);
@@ -111,26 +116,14 @@ public class GamePanel extends JPanel implements Runnable
         }
         graphics.setColor(Color.white);
         graphics.setFont(new Font("Arial", Font.BOLD, 40));
-        if (player.playerFinished)
-        {
-            FontMetrics fm = graphics.getFontMetrics();
-            String text = "Finished game";
-            int textWidth = fm.stringWidth(text);
-            int textHeight = fm.getHeight();
-            int x = (screenWidth - textWidth) / 2;
-            int y = (screenHeight - textHeight) / 2;
-            graphics.drawString(text, x, y);
-            levelLoader.currentLevel++;
-            levelLoader.LoadLevel();
-        }
+
         FontMetrics fm = graphics.getFontMetrics();
-        String text = "Finished game";
-        int textWidth = fm.stringWidth(text);
+        int textWidth = fm.stringWidth(String.valueOf(player.health));
         int textHeight = fm.getHeight();
         int x = (screenWidth - textWidth) / 12;
         int y = (screenHeight - textHeight) / 12;
         graphics.drawString(String.valueOf(player.health), x, y);
-        //display enemy
+        //Display enemy
         graphics.setColor(Color.blue);
         graphics.fillRect(enemy.posX,enemy.posY,tileSize,tileSize);
         //Display players
