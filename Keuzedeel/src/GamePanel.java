@@ -34,7 +34,7 @@ public class GamePanel extends JPanel implements Runnable
     ArrayList<Node> checkedList = new ArrayList<>();
     boolean goalReached = false;
     int step = 0;
-    public PathFinder pathFinder = new PathFinder(this);
+    public PathFinder pathFinder;
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -76,7 +76,7 @@ public class GamePanel extends JPanel implements Runnable
             }
             if (timer >= 1000000000)
             {
-                System.out.println("FPS: " + drawCount);
+//                System.out.println("FPS: " + drawCount);
                 drawCount = 0;
                 timer = 0;
             }
@@ -262,8 +262,9 @@ public class GamePanel extends JPanel implements Runnable
         obstacles = new ArrayList<>();
         finish = new ArrayList<>();
         healthPickups = new ArrayList<>();
+        allObstacles.clear();
         path = new ArrayList<>();
-
+        pathFinder = new PathFinder(this);
         if (obstacles != null)
         {
             obstacles.clear();

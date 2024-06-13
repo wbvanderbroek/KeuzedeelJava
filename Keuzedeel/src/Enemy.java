@@ -18,7 +18,8 @@ public class Enemy
     {
         int startCol = posX / gp.tileSize;
         int startRow = posY / gp.tileSize;
-        try {
+        try
+        {
             gp.pathFinder.setNodes(startCol, startRow, goalCol, goalRow);
 
             if (gp.pathFinder.search() == true)
@@ -53,36 +54,14 @@ public class Enemy
         }
         catch (Exception e)
         {
-
         }
-
     }
     public void moveEnemy() {
         if (onPath == true)
         {
-            int goalCol = 13;
-            int goalRow = 10;
-//            int goalCol = gp.player.posX / gp.tileSize;
-//            int goalRow = gp.player.posY / gp.tileSize;
+            int goalCol = gp.player.posX / gp.tileSize;
+            int goalRow = gp.player.posY / gp.tileSize;
             searchPath(goalCol, goalRow);
-        }
-        else
-        {
-//            if (posX < gp.player.posX)
-//            {
-//                posX += speed;
-//            } else if (posX > gp.player.posX)
-//            {
-//                posX -= speed;
-//            }
-//
-//            if (posY < gp.player.posY)
-//            {
-//                posY += speed;
-//            } else if (posY > posY)
-//            {
-//                posY -= speed;
-//            }
         }
     }
 }
