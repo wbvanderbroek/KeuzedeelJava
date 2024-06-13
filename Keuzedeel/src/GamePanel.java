@@ -23,10 +23,10 @@ public class GamePanel extends JPanel implements Runnable
     public ArrayList<Rectangle> allObstacles = new ArrayList<>();
 
     boolean gameStarted = false;
-    int currentLevel = 1;
+
     public Player player = new Player(this);
     Enemy enemy = new Enemy(this);
-
+    LevelLoader levelLoader = new LevelLoader(this);
     Node [] [] node = new Node [maxScreenCol] [maxScreenRow];
     Node startNode, goalNode, currentNode;
     ArrayList<Node> openList = new ArrayList<>();
@@ -188,7 +188,7 @@ public class GamePanel extends JPanel implements Runnable
         }
         if (player.health <= 0)
         {
-            LevelLoader();
+            levelLoader.LoadLevel();
         }
         enemy.moveEnemy();
     }
@@ -197,7 +197,7 @@ public class GamePanel extends JPanel implements Runnable
     {
         if (!gameStarted)
         {
-            LevelLoader();
+            levelLoader.LoadLevel();
             gameStarted = true;
         }
         super.paintComponent(_graphics);
@@ -232,8 +232,8 @@ public class GamePanel extends JPanel implements Runnable
             int x = (screenWidth - textWidth) / 2;
             int y = (screenHeight - textHeight) / 2;
             graphics.drawString(text, x, y);
-            currentLevel++;
-            LevelLoader();
+            levelLoader.currentLevel++;
+            levelLoader.LoadLevel();
         }
         FontMetrics fm = graphics.getFontMetrics();
         String text = "Finished game";
@@ -251,100 +251,7 @@ public class GamePanel extends JPanel implements Runnable
 
 
     }
-    private void LevelLoader()
-    {
-        player.health = player.maxHealth;
-        player.posY = tileSize;
-        player.posX = tileSize;
-        player.playerFinished = false;
-        obstacles = new ArrayList<>();
-        finish = new ArrayList<>();
-        healthPickups = new ArrayList<>();
-        allObstacles.clear();
-        path = new ArrayList<>();
-        pathFinder = new PathFinder(this);
-        if (obstacles != null)
-        {
-            obstacles.clear();
 
-        }
-        if (finish != null)
-        {
-            finish.clear();
-        }
-        if (path != null)
-        {
-            path.clear();
-        }
-        //left and right bar
-        obstacles.add(new Rectangle(0, 0, tileSize, tileSize * maxScreenRow));
-        obstacles.add(new Rectangle(screenWidth - tileSize, 0, tileSize, tileSize * maxScreenRow));
-        //top and bottom bar
-        obstacles.add(new Rectangle(0, 0, tileSize * screenWidth, tileSize));
-        obstacles.add(new Rectangle(0, screenHeight - tileSize, tileSize * screenWidth, tileSize));
-
-        if (currentLevel == 1)
-        {
-            //actual obstacles
-            obstacles.add(new Rectangle(tileSize * 3, tileSize, tileSize, tileSize * 8));
-            obstacles.add(new Rectangle(tileSize * 6, tileSize * 3, tileSize, tileSize * 8));
-            obstacles.add(new Rectangle(tileSize * 9, tileSize, tileSize, tileSize * 8));
-            obstacles.add(new Rectangle(tileSize * 12, tileSize * 3, tileSize, tileSize * 8));
-
-            //finish
-            finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
-
-            //health pickups
-            healthPickups.add(new Rectangle(tileSize, tileSize * 4, tileSize, tileSize));
-
-        }
-        else if (currentLevel == 2)
-        {
-            //finish
-            finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
-        }
-        for (int i = 0; i < maxScreenCol; i++)
-        {
-            for (int j = 0; j < maxScreenRow; j++)
-            {
-                Rectangle tempRect = new Rectangle(tileSize * i, tileSize * j, tileSize, tileSize);
-                boolean intersects = false;
-                for (Rectangle object : obstacles)
-                {
-                    if (tempRect.intersects(object))
-                    {
-                        intersects = true;
-                        break;
-                    }
-                }
-                if (!intersects)
-                {
-                    path.add(tempRect);
-                }
-            }
-        }
-        for (int i = 0; i < maxScreenCol; i++)
-        {
-            for (int j = 0; j < maxScreenRow; j++)
-            {
-                Rectangle tempRect = new Rectangle(tileSize * i, tileSize * j, tileSize, tileSize);
-                boolean intersects = false;
-                for (Rectangle object : path)
-                {
-                    if (tempRect.intersects(object))
-                    {
-                        intersects = true;
-                        break;
-                    }
-                }
-                if (!intersects)
-                {
-                    allObstacles.add(tempRect);
-                }
-            }
-        }
-
-    }
     private void CreateObstacle(Graphics _graphics, int posX, int posY, int sizeX, int sizeY, Color color)
     {
         Graphics2D obstacle  = (Graphics2D)_graphics;
