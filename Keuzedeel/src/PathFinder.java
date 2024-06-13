@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.sql.Struct;
 import java.util.ArrayList;
 
 public class PathFinder
@@ -69,10 +70,14 @@ public class PathFinder
         int col = 0;
         int row = 0;
 
-        while (col < gp.maxScreenCol && row < gp.maxScreenRow)
+
+
+        for (Rectangle object: gp.allObstacles)
         {
-        
+            node [object.x / gp.tileSize][object.y / gp.tileSize].solid = true;
+            getCost(node [object.x / gp.tileSize][object.y / gp.tileSize]);
         }
+
     }
     private void getCost(Node node)
     {
@@ -88,12 +93,6 @@ public class PathFinder
 
         //f cost, total cost
         node.fCost = node.gCost + node.hCost;
-
-        //display cost on node
-        if (node != startNode && node != goalNode)
-        {
-            node.setText("<html>F:" +node.fCost + "<br>G:" + node.gCost + "</html>");
-        }
     }
     public boolean search()
     {
@@ -141,7 +140,7 @@ public class PathFinder
                     }
                 }
             }
-            if (openList.size() <= 0)
+            if (openList.size() == 0)
             {
                 break;
             }
@@ -167,11 +166,10 @@ public class PathFinder
     private void trackPath()
     {
         Node current = goalNode;
-
         while (current != startNode)
         {
-            current = current.parent;
             pathList.add(0, current);
+            current = current.parent;
         }
     }
 
