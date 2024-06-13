@@ -85,7 +85,7 @@ public class Enemy
     {
         try
         {
-            sprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/roblox-face.png"));
+            sprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("sprites/roblox-face.png"));
         }
         catch (IOException e)
         {

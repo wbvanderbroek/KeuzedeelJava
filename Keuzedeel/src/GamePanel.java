@@ -132,7 +132,7 @@ public class GamePanel extends JPanel implements Runnable
     {
         try
         {
-            finishSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/exit-icon.png"));
+            finishSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("sprites/exit-icon.png"));
         }
         catch (IOException e)
         {

@@ -140,7 +140,7 @@ public class Player
     {
         try
         {
-            playerSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/roblox-smirk.png"));
+            playerSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("sprites/roblox-smirk.png"));
         }
         catch (IOException e)
         {
