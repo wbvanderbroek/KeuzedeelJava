@@ -70,8 +70,6 @@ public class PathFinder
         int col = 0;
         int row = 0;
 
-
-
         for (Rectangle object: gp.allObstacles)
         {
             node [object.x / gp.tileSize][object.y / gp.tileSize].solid = true;

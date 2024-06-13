@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class GamePanel extends JPanel implements Runnable
 {
@@ -25,7 +24,7 @@ public class GamePanel extends JPanel implements Runnable
 
     boolean gameStarted = false;
     int currentLevel = 1;
-    public Player player = new Player(tileSize);
+    public Player player = new Player(this);
     Enemy enemy = new Enemy(this);
 
     Node [] [] node = new Node [maxScreenCol] [maxScreenRow];
@@ -196,7 +195,6 @@ public class GamePanel extends JPanel implements Runnable
 
     public void paintComponent(Graphics _graphics)
     {
-
         if (!gameStarted)
         {
             LevelLoader();
