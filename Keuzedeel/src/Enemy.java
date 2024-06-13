@@ -1,3 +1,8 @@
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
 public class Enemy
 {
     public int health = 100;
@@ -7,6 +12,7 @@ public class Enemy
     public int speed = 3;
     boolean onPath = false;
     GamePanel gp;
+    BufferedImage sprite;
     public Enemy(GamePanel gp)
     {
         this.gp = gp;
@@ -67,6 +73,23 @@ public class Enemy
             int goalCol = gp.player.posX / gp.tileSize;
             int goalRow = gp.player.posY / gp.tileSize;
             searchPath(goalCol, goalRow);
+        }
+    }
+    public void draw(Graphics graphics)
+    {
+        getImage();
+        BufferedImage image = sprite;
+        graphics.drawImage(sprite, posX, posY, gp.tileSize, gp.tileSize, null);
+    }
+    public void getImage()
+    {
+        try
+        {
+            sprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/roblox-face.png"));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 }

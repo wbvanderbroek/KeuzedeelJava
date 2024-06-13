@@ -1,5 +1,8 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable
@@ -27,8 +30,10 @@ public class GamePanel extends JPanel implements Runnable
     public Player player = new Player(this);
     Enemy enemy = new Enemy(this);
     LevelLoader levelLoader = new LevelLoader(this);
-
+    UIDisplay uiDisplay = new UIDisplay(this);
     public PathFinder pathFinder;
+    BufferedImage finishSprite;
+
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -86,7 +91,6 @@ public class GamePanel extends JPanel implements Runnable
             levelLoader.LoadLevel();
         }
     }
-
     public void paintComponent(Graphics _graphics)
     {
         if (!gameStarted)
@@ -96,41 +100,45 @@ public class GamePanel extends JPanel implements Runnable
         }
         super.paintComponent(_graphics);
         Graphics2D graphics = (Graphics2D)_graphics;
-
+        getImage();
         //Display all the objects
         for (Rectangle obstacle : obstacles)
         {
-            CreateObstacle(_graphics, obstacle.x, obstacle.y, obstacle.width, obstacle.height, Color.red);
+            CreateObstacle(_graphics, obstacle.x, obstacle.y, obstacle.width, obstacle.height, Color.decode("#006836"));
         }
         for (Rectangle object : path)
         {
-            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.white);
+            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.decode("#9b6836"));
         }
         for (Rectangle object : healthPickups)
         {
             CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.green);
         }
+        BufferedImage image = finishSprite;
+
         for (Rectangle object : finish)
         {
-            CreateObstacle(_graphics, object.x, object.y, object.width, object.height, Color.DARK_GRAY);
+            graphics.drawImage(finishSprite, object.x, object.y, object.width, object.height, null);
+
         }
-        graphics.setColor(Color.white);
-        graphics.setFont(new Font("Arial", Font.BOLD, 40));
 
-        FontMetrics fm = graphics.getFontMetrics();
-        int textWidth = fm.stringWidth(String.valueOf(player.health));
-        int textHeight = fm.getHeight();
-        int x = (screenWidth - textWidth) / 12;
-        int y = (screenHeight - textHeight) / 12;
-        graphics.drawString(String.valueOf(player.health), x, y);
-        //Display enemy
-        graphics.setColor(Color.blue);
-        graphics.fillRect(enemy.posX,enemy.posY,tileSize,tileSize);
-        //Display players
-        graphics.setColor(Color.orange);
-        graphics.fillRect(player.posX,player.posY,tileSize,tileSize);
+        uiDisplay.draw(graphics);
+        player.draw(graphics);
+        enemy.draw(graphics);
+
+        graphics.dispose();
     }
-
+    public void getImage()
+    {
+        try
+        {
+            finishSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/exit-icon.png"));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
     private void CreateObstacle(Graphics _graphics, int posX, int posY, int sizeX, int sizeY, Color color)
     {
         Graphics2D obstacle  = (Graphics2D)_graphics;

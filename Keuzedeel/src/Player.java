@@ -1,4 +1,7 @@
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player
@@ -10,6 +13,7 @@ public class Player
     public int playerSpeed = 5;
     boolean playerFinished = false;
     GamePanel gp;
+    public BufferedImage playerSprite;
 
     public Player(GamePanel gp)
     {
@@ -126,5 +130,23 @@ public class Player
             gp.levelLoader.LoadLevel();
         }
     }
+    public void draw(Graphics graphics)
+    {
+        getPlayerImage();
+        BufferedImage image = playerSprite;
+        graphics.drawImage(playerSprite, posX, posY, gp.tileSize, gp.tileSize, null);
+    }
+    public void getPlayerImage()
+    {
+        try
+        {
+            playerSprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/roblox-smirk.png"));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 
 }
