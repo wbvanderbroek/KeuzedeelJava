@@ -11,6 +11,7 @@ public class LevelLoader
     int maxScreenRow;
 
     int currentLevel = 1;
+
     public LevelLoader(GamePanel gp)
     {
         this.gp = gp;

@@ -11,8 +11,8 @@ public class GamePanel extends JPanel implements Runnable
     final int maxScreenRow = 12;
     final int screenWidth = tileSize * maxScreenCol;
     final int screenHeight = tileSize * maxScreenRow;
-
     int fps = 60;
+
     KeyHandler keyHandler = new KeyHandler(this);
     Thread gameThread;
 
@@ -27,12 +27,7 @@ public class GamePanel extends JPanel implements Runnable
     public Player player = new Player(this);
     Enemy enemy = new Enemy(this);
     LevelLoader levelLoader = new LevelLoader(this);
-    Node [] [] node = new Node [maxScreenCol] [maxScreenRow];
-    Node startNode, goalNode, currentNode;
-    ArrayList<Node> openList = new ArrayList<>();
-    ArrayList<Node> checkedList = new ArrayList<>();
-    boolean goalReached = false;
-    int step = 0;
+
     public PathFinder pathFinder;
     public GamePanel()
     {
@@ -83,114 +78,8 @@ public class GamePanel extends JPanel implements Runnable
     }
     public void update()
     {
-        int nextPlayerX = player.posX;
-        int nextPlayerY = player.posY;
-        if (!player.playerFinished) {
-            if (keyHandler.upPressed) {
-                nextPlayerY -= player.playerSpeed;
-            }
-            if (keyHandler.downPressed) {
-                nextPlayerY += player.playerSpeed;
-            }
-            if (keyHandler.leftPressed) {
-                nextPlayerX -= player.playerSpeed;
-            }
-            if (keyHandler.rightPressed) {
-                nextPlayerX += player.playerSpeed;
-            }
-        }
-
-        boolean collisionX = false;
-        if (player.posX != nextPlayerX)
-        {
-            for (int i = 1; i <= player.playerSpeed; i++)
-            {
-                Rectangle nextPlayerRectX = new Rectangle(player.posX + (nextPlayerX - player.posX > 0 ? i : -i), player.posY, tileSize, tileSize);
-                collisionX = false;
-                for (Rectangle obstacle : obstacles)
-                {
-                    if (nextPlayerRectX.intersects(obstacle))
-                    {
-                        collisionX = true;
-                        break;
-                    }
-                }
-                if (!collisionX)
-                {
-                    player.posX = player.posX + (nextPlayerX - player.posX > 0 ? 1 : -1);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-
-        boolean collisionY = false;
-        if (player.posY != nextPlayerY)
-        {
-            for (int i = 1; i <= player.playerSpeed; i++)
-            {
-                Rectangle nextPlayerRectX = new Rectangle(player.posX, player.posY + (nextPlayerY - player.posY > 0 ? i : -i), tileSize, tileSize);
-                collisionY = false;
-                for (Rectangle obstacle : obstacles)
-                {
-                    if (nextPlayerRectX.intersects(obstacle))
-                    {
-                        collisionY = true;
-                        break;
-                    }
-                }
-                if (!collisionY)
-                {
-                    player.posY = player.posY + (nextPlayerY - player.posY > 0 ? 1 : -1);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-
-        if (!player.playerFinished)
-        {
-            Rectangle playerRect = new Rectangle(player.posX, player.posY, tileSize, tileSize);
-            for (Rectangle object : finish)
-            {
-                if (playerRect.intersects(object))
-                {
-                    System.out.println("finished");
-                    player.playerFinished = true;
-                }
-            }
-
-            ArrayList<Rectangle> objectsToRemove = new ArrayList<>();
-            for (Rectangle object : healthPickups)
-            {
-                if (playerRect.intersects(object))
-                {
-                    objectsToRemove.add(object);
-                    System.out.println("pickedUpHealth");
-                    player.health = player.health + 20;
-                }
-            }
-            for (Rectangle object :objectsToRemove)
-            {
-                healthPickups.remove(object);
-            }
-
-        }
-
-        if ((collisionX || collisionY) == true)
-        {
-            player.health--;
-            System.out.println("collided");
-        }
-        if (player.health <= 0)
-        {
-            levelLoader.LoadLevel();
-        }
-        enemy.moveEnemy();
+        player.update();
+        enemy.update();
     }
 
     public void paintComponent(Graphics _graphics)
@@ -202,7 +91,6 @@ public class GamePanel extends JPanel implements Runnable
         }
         super.paintComponent(_graphics);
         Graphics2D graphics = (Graphics2D)_graphics;
-
 
         //Display all the obstacles
         for (Rectangle obstacle : obstacles)
@@ -248,8 +136,6 @@ public class GamePanel extends JPanel implements Runnable
         //Display players
         graphics.setColor(Color.orange);
         graphics.fillRect(player.posX,player.posY,tileSize,tileSize);
-
-
     }
 
     private void CreateObstacle(Graphics _graphics, int posX, int posY, int sizeX, int sizeY, Color color)

@@ -14,6 +14,11 @@ public class Enemy
         posY = 420;
         onPath = true;
     }
+    public void update()
+    {
+        moveEnemy();
+    }
+
     public void searchPath(int goalCol, int goalRow)
     {
         int startCol = posX / gp.tileSize;
