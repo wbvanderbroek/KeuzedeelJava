@@ -13,6 +13,7 @@ public class Enemy
     boolean onPath = false;
     GamePanel gp;
     BufferedImage sprite;
+    int attackRange = 50;
     public Enemy(GamePanel gp)
     {
         this.gp = gp;
@@ -23,6 +24,7 @@ public class Enemy
     public void update()
     {
         moveEnemy();
+        tryDamagePlayer();
     }
 
     public void searchPath(int goalCol, int goalRow)
@@ -92,4 +94,13 @@ public class Enemy
             e.printStackTrace();
         }
     }
+    private void tryDamagePlayer()
+    {
+        if ((posX > gp.player.posX - attackRange && posX < gp.player.posX + attackRange) &&
+                (posY > gp.player.posY - attackRange && posY < gp.player.posY + attackRange))
+        {
+            gp.player.health--;
+        }
+    }
+
 }
