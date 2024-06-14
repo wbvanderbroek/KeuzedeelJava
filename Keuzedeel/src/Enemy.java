@@ -17,8 +17,8 @@ public class Enemy
     public Enemy(GamePanel gp)
     {
         this.gp = gp;
-        posX = gp.tileSize;
-        posY = 420;
+        posX = gp.tileSize * 6;
+        posY = gp.tileSize * 5;
         onPath = true;
     }
     public void update()

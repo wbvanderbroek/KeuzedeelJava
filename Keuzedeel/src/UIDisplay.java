@@ -14,10 +14,10 @@ public class UIDisplay
         graphics.setFont(new Font("Arial", Font.BOLD, 40));
 
         FontMetrics fm = graphics.getFontMetrics();
-        int textWidth = fm.stringWidth(String.valueOf(gp.player.health));
+        int textWidth = fm.stringWidth("Health: " + String.valueOf(gp.player.health));
         int textHeight = fm.getHeight();
         int x = (gp.screenWidth - textWidth) / 12;
         int y = (gp.screenHeight - textHeight) / 12;
-        graphics.drawString(String.valueOf(gp.player.health), x, y);
+        graphics.drawString("Health: " + String.valueOf(gp.player.health), x, y);
     }
 }

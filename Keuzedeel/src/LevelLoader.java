@@ -54,21 +54,61 @@ public class LevelLoader
 
         if (currentLevel == 1)
         {
+            gp.obstacles.add(new Rectangle(tileSize * 7, tileSize, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 7, tileSize * 2, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 7, tileSize * 3, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 7, tileSize * 4, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 7, tileSize * 5, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 7, tileSize * 6, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 6, tileSize * 6, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 5, tileSize * 6, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 4, tileSize * 6, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 3, tileSize * 6, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 3, tileSize * 5, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 3, tileSize * 4, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 3, tileSize * 9, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 3, tileSize * 10, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 4, tileSize * 3, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 3, tileSize * 3, tileSize, tileSize));
+
+            gp.obstacles.add(new Rectangle(tileSize * 12, tileSize * 10, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 12, tileSize * 9, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 12, tileSize * 8, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 13, tileSize * 5, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 14, tileSize * 5, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 10, tileSize * 8, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 11, tileSize * 8, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 6, tileSize * 8, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 6, tileSize * 7, tileSize, tileSize));
+
+            gp.obstacles.add(new Rectangle(tileSize * 10, tileSize * 5, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 10, tileSize * 6, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 10, tileSize * 7, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 10, tileSize * 4, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 10, tileSize * 3, tileSize, tileSize));
+            gp.obstacles.add(new Rectangle(tileSize * 10, tileSize * 5, tileSize, tileSize));
+
+
+
+
+
+
+
+
+            //finish
+            gp.finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
+        }
+        else if (currentLevel == 2)
+        {
             //actual obstacles
             gp.obstacles.add(new Rectangle(tileSize * 3, tileSize, tileSize, tileSize * 8));
             gp.obstacles.add(new Rectangle(tileSize * 6, tileSize * 3, tileSize, tileSize * 8));
             gp.obstacles.add(new Rectangle(tileSize * 9, tileSize, tileSize, tileSize * 8));
             gp.obstacles.add(new Rectangle(tileSize * 12, tileSize * 3, tileSize, tileSize * 8));
 
-            //finish
-            gp.finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
 
             //health pickups
             gp.healthPickups.add(new Rectangle(tileSize, tileSize * 4, tileSize, tileSize));
-
-        }
-        else if (currentLevel == 2)
-        {
             //finish
             gp.finish.add(new Rectangle(screenWidth - tileSize * 3, screenHeight - tileSize * 2, tileSize * 2, tileSize * 2));
         }
